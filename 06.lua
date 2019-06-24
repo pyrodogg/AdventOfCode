@@ -2,9 +2,9 @@
 
 require 'util'
 
-function manhattan(a,b)
+local manhattan = curry(function(a,b)
     return math.abs(a.x - b.x) + math.abs(a.y - b.y)
-end
+end)
 
 local input = '06 - Input.txt'
 local coords = keyBy(map(lines_from(input), function(v,k,t) 
@@ -15,7 +15,6 @@ local coords = keyBy(map(lines_from(input), function(v,k,t)
                     return point
                 end),'raw')
 
-local mnhttn = curry(manhattan,2)
 
 for x=1,1 do
     for y=1,1 do
