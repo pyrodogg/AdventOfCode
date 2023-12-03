@@ -1,3 +1,4 @@
+package.path = package.path .. ';../../?.lua'
 require "util"
 local lpeg = require "lpeg"
 

@@ -1,3 +1,4 @@
+package.path = package.path .. ';../../?.lua'
 require "util"
 local lpeg = require "lpeg"
 
@@ -40,7 +41,7 @@ for k,v in pairs(lines) do
 end
 
 --2685
-print(string.format('Part 1 - Answer %d\n', accumulator))
+print(string.format('Part 1 - Answer %d', accumulator))
 
 
 function gamePower(s)
