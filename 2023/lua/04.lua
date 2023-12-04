@@ -2,86 +2,49 @@ package.path = package.path .. ';../../?.lua'
 require "util"
 local inspect = require "inspect"
 
-print('Day Four')
 
-local lines = lines_from('../input/04.txt')
+local lines = lines_from(arg[1] or ('../input/'..string.gsub(arg[0],'lua','txt')))
 local P1, P2 = 0, 0
 local deck = {}
-for k,v in pairs(lines) do
-
-    --local card_number = tonumber(v:match('Card (%d+)%:'),10)
+-- Parse lines
+for k,v in ipairs(lines) do
 
     local winners = {}
-    local havers = {}
-    local next = false
-    local foo = v:sub(9)
-    for i, j in foo:gmatch('()'..'([%d|]+)'..'') do
-
-        if j == '|' then 
-            next = true 
-        end
-
-        if next then
-            table.insert(havers,j)
-        else
-            --table.insert(winners,j)
-            winners[j] = j
-        end
-    end
-
-    local keepers = {}
     local power = 0
-    for i, j in pairs(havers) do
-        if winners[j] ~= nil then
-            power = power + 1
-            table.insert(keepers,j)
+    local foo = v:sub(9) -- skip game ID
+    local delim = foo:find('%|')
+    for i, j in foo:gmatch('()'..'([%d]+)'..'') do
+
+        if i < delim then 
+            winners[j] = j -- set for lookup
+        else
+            if winners[j] ~= nil then
+                power = power + 1
+            end
         end
     end
 
     if deck[k] == nil then deck[k] = {} end
     deck[k]["card"] = k
-    deck[k]["winners"] = winners
-    deck[k]["havers"] = havers
-    deck[k]["keepers"] = keepers
+    deck[k]["copies"] = (deck[k]["copies"] or 0) + 1
     if power > 0 then 
-        deck[k]["power"] = power
-        deck[k]["winner"] = true
         P1 = P1 + 2^(power-1)
-    end
-end
 
-local toEval = {}
-for k,v in pairs(deck) do
-
-    P2 = P2 + 1
-    if v.winner then
-        for i = v.card+1, v.card+#v.keepers do
-            -- copy cards
-            table.insert(toEval,i)
-            --print(v.card, i) -- had to print to missing +1 causing infinite loop
+        --Propegate copies
+        for i = k+1, k+power do
+            if deck[i] == nil then deck[i] = {} end
+            deck[i].card = i
+            deck[i].copies = (deck[i].copies or 0) + deck[k].copies
         end
     end
-    --break
+
+    P2 = P2 + deck[k]["copies"]
 end
 
-while true do
-    
-    local checking = table.remove(toEval,#toEval)
-    if checking == nil then break end
+--Alt P2 calc
+P3 = sumBy(deck,'copies')
 
-    P2 = P2 + 1
-    if deck[checking].winner then 
-
-        for i = deck[checking].card+1, deck[checking].card+#deck[checking].keepers do
-            -- copy cards
-            table.insert(toEval,i)
-        end
-    end
-end
-
---print('deck end ',#deck)
-
+print('\nDay Four')
 print(string.format('Part 1 - Answer %d',P1)) -- 21959
-print(string.format('Part 2 - Answer %d\n', P2)) -- 5132675
-
---P1 guesses 26988 21977
+print(string.format('Part 2 - Answer %d', P2)) -- 5132675
+print(string.format('Part 2 - SumBy %d', P3))

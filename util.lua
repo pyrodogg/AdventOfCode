@@ -1,5 +1,8 @@
--- http://lua-users.org/wiki/FileInputOutput
+function T(t)
+  return setmetatable(t, {__index = table})
+end
 
+-- http://lua-users.org/wiki/FileInputOutput
 -- Return true if file exists and is readable.
 function file_exists(path)
     local file = io.open(path, "rb")
@@ -83,6 +86,7 @@ function spairs(t, sortFunction)
   end)
 end
 
+
 function map(t, f)
   local res = {}
   for k,v in pairs(t) do
@@ -151,6 +155,30 @@ function keyBy(t,f)
   return ret
 end
 
+-- sumBy(table,function(a,v,k,t) end)
+-- sumBy(table,'copies')
+-- sumBy(table,'foo.bar') TODO
+function sumBy(t, f)
+  local ret = 0
+
+  ret = reduce(t,function(a,v) 
+    
+    local g
+    if type(f) == 'function' then
+      g = f(v)
+    elseif type(f) == 'string' and v[f] ~= nil then
+      g = v[f]
+    else
+      g = v
+    end
+
+    return a + g
+    
+  end, 0)
+
+  return ret
+end
+
 function sort(t,f)
   local res = {}
   for k,v in spairs(t,f) do
@@ -210,3 +238,33 @@ function flatten(t)
   end
   return ret
 end
+
+function reduce(t,i,a)
+  local res = a
+  for k,v in pairs(t) do
+    res = i(res,v,k,t)
+  end
+  return res
+end
+
+function table:reduce(i,a)
+  return reduce(self,i,a)
+end
+
+function unroll(f,_s,_var)
+  --iterate some function until exhausted (or safety?)
+  --capture all returns to table.
+  local res = {}
+  local count = 1
+  --Syntax sugar for a for loop,is reasonably safe if implemented soundly*
+  while true do
+      local r = {f(_s,_var)}
+      _var = r[1]
+      if _var == nil then break end
+      res[count] = r
+      count = count + 1
+      -- if count > 10000 then break end -- sanity check
+  end
+  return res
+end
+
