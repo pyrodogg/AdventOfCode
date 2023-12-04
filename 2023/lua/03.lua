@@ -1,7 +1,7 @@
 package.path = package.path .. ';../../?.lua'
 require "util"
 
-print('Day Three')
+
 
 local lines = lines_from('../input/03.txt')
 local gears = {}
@@ -48,5 +48,6 @@ for k in pairs(gears) do
     end
 end
 
+print('\nDay Three')
 print(string.format('Part 1 - Answer %d',P1)) -- 556367
-print(string.format('Part 2 - Answer %d\n', P2)) --89471771
+print(string.format('Part 2 - Answer %d', P2)) --89471771
