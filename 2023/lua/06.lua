@@ -27,26 +27,24 @@ for k,v in pairs(lines) do
     end
 end
 
-print(inspect(raceP2))
+function quadDiff(D,T)
 
-for k, race in pairs(races) do 
-    --print('race #', k)
-    local hold = {}
-    -- min, max, difference <-- mathy solution
-    -- target is distance, budget is time
-    -- (time-hold)*(hold) = distance
-    for h = 1, race.time do
-       local attempt = (race.time-h)*h
-       if attempt > race.distance then
-            table.insert(hold,h)
-       end
-    end
-    P1 = P1 * #hold
+    local low = math.ceil((-T + math.sqrt(T^2 - 4*D)) / -2)
+    local high = math.ceil((-T - math.sqrt(T^2 - 4*D)) / -2)
+    return high - low
 end
 
--- Part 2 (extension of 'math' idea)
+for k, race in pairs(races) do 
+
+    -- -- min, max, difference <-- mathy solution
+    -- -- target is distance, budget is time
+    -- -- (time-hold)*(hold) = distance
+    P1 = P1 * quadDiff(race.distance, race.time)
+end
+
+-- Part 2 (Mathy)
 -- Mathy idea - How many points on a curve lie above a threshold line?
--- 'Plot' y=(a-x)*x as the curve, how many points lie above y1 (race time)?
+P2 = quadDiff(raceP2.distance,raceP2.time)
 
 -- PART 2 (Brute force)
 -- Buuut, Brute YAY (took a while, didn't time it) kill when P2 stops changing
