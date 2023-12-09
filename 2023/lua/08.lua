@@ -75,6 +75,6 @@ end
 -- Will try to follow up with a coded solution
 P2 = 14321394058031
 
-print('\nDay Seven')
+print('\nDay Eight')
 print(string.format('Part 1 - Answer %d',P1)) -- 14681
 print(string.format('Part 2 - Answer %d', P2)) -- 14321394058031 
