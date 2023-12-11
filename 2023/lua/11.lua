@@ -10,26 +10,6 @@ local P1, P2 = 0, 0
 -- Pairs
 -- Travelling salesman??
 
-local function matrixtostring(M)
-
-    local s = ''
-    for k,v in pairs(M) do
-        for i=1, #v do 
-            s = s..v[i]
-        end
-        s = s..'\n'
-    end
-    return s
-end
-
-local function clone(t)
-    local a = {}
-    for k,v in ipairs(t) do
-        a[k] = v
-    end
-    return a
-end
-
 local space = {}
 local spacerow = 1
 local galaxy_col = {}
@@ -43,26 +23,8 @@ for k, v in pairs(lines) do
     end
     spacerow = spacerow + 1
     
-    -- if v:find("[%#]") == nil then
-    --     space[spacerow] = clone(space[spacerow-1])
-    --     spacerow = spacerow  + 1
-    -- end
 end
 
---print(matrixtostring(space))
---print(inspect(galaxy_col))
-
--- for i = #space[1], 1, -1 do
---     -- Go backward to not mess indexes
---     if galaxy_col[i] == nil then
---        --Empty column, expand
---         for j = 1, #space do
---             table.insert(space[j],i,'.')
---         end
---     end
--- end
-
---print(matrixtostring(space))
 local galaxy = {}
 for y = 1, #space do
     for x = 1, #space[1] do
@@ -71,8 +33,6 @@ for y = 1, #space do
         end
     end
 end
-
---print(inspect(galaxy))
 
 local function warpdist(a,b,cost)
     --distinct left/right, up/down moves
@@ -115,11 +75,6 @@ end
     Didn't even have to implement A*, 'straight' lines were still optimal
 ]]
 
-print('\nDay Ten')
+print('\nDay Eleven')
 print(string.format('Part 1 - Answer %d',P1)) -- 10276166
 print(string.format('Part 2 - Answer %d', P2)) -- 598693078798
-
---[[
-
-
-]]
