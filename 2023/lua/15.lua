@@ -17,8 +17,7 @@ local function fastdiv(dividend, divisor)
         if rem < 0 then break end
     end
 
-
-    return quot, math.abs(rem+divisor)
+    return quot, rem+divisor
 end
 
 local cache = {}
@@ -53,12 +52,10 @@ for s in lines[1]:gmatch("([^,]*),-") do
 
     local h = hash(label)
 
-    --print(label, op, n)
-
-    if box[h] == nil then 
+    if box[h] == nil then
         box[h] = {}
     end
-    
+
     if op == "=" then
         local done
         for i=1, #box[h] do
@@ -68,10 +65,9 @@ for s in lines[1]:gmatch("([^,]*),-") do
                 done = true
             end
         end
-        if done == nil then 
+        if done == nil then
             table.insert(box[h],{l=label, p=n})
         end
-
     else
         -- remove
         local rindex = 0
@@ -84,25 +80,14 @@ for s in lines[1]:gmatch("([^,]*),-") do
             end
         end
     end
-
-    --if mc >=10 then break end
-    mc = mc + 1
-
-    if err then break end
 end
 
--- print(inspect(box))
-
 for k,b in pairs(box) do
-
     for i,l in pairs(b) do
-        --print(1+k, i, l.p, ((1+k) * i * l.p), l.l)
-
         P2 = P2 + ((1+k) * i * l.p)
     end
 end
 
-
-print('\nDay Twelve')
+print('\nDay Fifteen')
 print(string.format('Part 1 - Answer %s',P1)) -- 514639
 print(string.format('Part 2 - Answer %d', P2)) -- 279470
