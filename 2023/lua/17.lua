@@ -18,60 +18,6 @@ for k,v in pairs(lines) do
     end
 end
 local width, height = #map[1], #map
--- start = mapList[1]
--- goal = mapList[#mapList]
--- local inf = 1/0
-
-local mapList = {}
-
-local function getneighbors(node)
-    local n = {}
-
-    if node.x > 1 then n["l"] = map[node.y][node.x-1] end
-    if node.x < #lines[1] then n["r"] = map[node.y][node.x+1] end
-    if node.y > 1 then n["u"] = map[node.y-1][node.x] end
-    if node.y < #lines then n["d"] = map[node.y+1][node.x] end
-
-    return n
-end
-
-
-
-for x=1,width do
-    for y=1, height do
-        map[y][x].neighbors = getneighbors({x=x,y=y})
-    end
-end
-
-local function heuristic(a,b)
-    return 0
-end
-
-local function manhattan(a,b)
-    return math.abs(b.y - a.y) + math.abs(b.x - a.x)
-end
-
-
-
-local function revdir(dir)
-
-    if dir == "u" then return "d" end
-    if dir == "d" then return "u" end
-    if dir == "l" then return "r" end
-    if dir == "r" then return "l" end
-end
-
-local function allowmove(current, dir)
-        -- look back 3 moves
-        -- if all 3 moves match dir, further movement in dir is blocked
-
-        return (current.indir ~= dir
-        or (current.camefrom.indir or "") ~= dir
-        or (current.camefrom.camefrom.indir or dir) ~= dir)
-        and (revdir(current.indir) ~= dir)
-end
-
--- costsofar[{x,y}+{n}+{dirmove}]
 
 local function getneighborstuple(grid, pos, dir, minmove, maxmove)
     local minmove = minmove or 1
@@ -94,16 +40,10 @@ local function getneighborstuple(grid, pos, dir, minmove, maxmove)
         end
     end
 
-    -- print(inspect(n,{depth=2}))
-
     return n
 end
 
 local function astar(grid, start, goal, minmove, maxmove)
- 
-    -- start.camefrom = ""
-    -- start.costsofar = 0
-    -- start.indir = "s"
 
     local frontier = {} -- "Priority Queue" {score, {x,y,dir}}
     table.insert(frontier,{score=0, pointdir=start})
@@ -187,7 +127,7 @@ end
 start = tuple(1,1, nil) --map[1][1]
 goal = tuple(width,height) --map[height][width]
 local costs, camefrom, costs2, camefrom2
---P1, costs, camefrom = astar(map, start, goal, 1, 3)
+P1, costs, camefrom = astar(map, start, goal, 1, 3)
 P2, costs2, camefrom2 = astar(map,start,goal, 4,10)
 
 -- print(inspect(costs, {depth=2}))
@@ -258,6 +198,6 @@ end
 -- print(maptostring(map))
 
 
-print('\nDay Sixteen')
+print('\nDay Seventeen')
 print(string.format('Part 1 - Answer %s',P1)) -- 1004
 print(string.format('Part 2 - Answer %d', P2)) -- 1171
