@@ -28,7 +28,6 @@ end
 
 local map, cells, width, height = parsedata()
 
-
 local function mapcellat(x, y, allowoob)
 
     local allowoob = allowoob or false
@@ -121,9 +120,7 @@ local function writemapcells(cellmap, section)
     f:close()
 end
 
-local cellmap
-P1, cellmap = spacesaftersteps(map, cells, 64, false)
-map, cells = parsedata()
+P1 = spacesaftersteps(map, cells, 64, false)
 
 -- how many cells in 'odd' cells like center? 7558 (center filled, corners empty)
 -- how many cells in 'even' center cells? 7623 (center empty, coners filled)
@@ -132,33 +129,31 @@ map, cells = parsedata()
     -- if "3/4" is odd, "1/4" is even, vice versa
 
 local part2steps = 26501365
--- part2steps = (width*4)+65
 local wingwidth = math.floor((part2steps-(width-1)/2)/width)-1
--- print(wingwidth)
 local totalevencells = (wingwidth+1)^2 --(wingwidth- math.floor(wingwidth/2))*4
 local totaloddcells = wingwidth^2--(math.floor(wingwidth/2))*4+1 -- +1 is center
-print("interior odd cells", totaloddcells)
-print("interior even cells", totalevencells)
+-- print("interior odd cells", totaloddcells)
+-- print("interior even cells", totalevencells)
 local edge34tiles = wingwidth
 local edge14tiles = (wingwidth+1)
-print("edge 3/4", wingwidth*4)
-print("edge 1/4", (wingwidth+1)*4)
-if (wingwidth +1) %2 ==0 then
-    --corner is odd
-    -- edge 3/4s are odd
-    -- edge 1/4s are even
-    print("corner is odd")
-else
-    --corner is even
-    -- edge 3/4s are even
-    -- edge 1/4s are odd
-    print("corner is even")
-end
+-- print("edge 3/4", wingwidth*4)
+-- print("edge 1/4", (wingwidth+1)*4)
+-- if (wingwidth +1) %2 ==0 then
+--     --corner is odd
+--     -- edge 3/4s are odd
+--     -- edge 1/4s are even
+--     print("corner is odd")
+-- else
+--     --corner is even
+--     -- edge 3/4s are even
+--     -- edge 1/4s are odd
+--     print("corner is even")
+-- end
 
 local function calcandrender(cells, spaces, section)
 
     local score, cellmap = spacesaftersteps(map, cells, spaces, false)
-    writemapcells(cellmap, section)
+    -- writemapcells(cellmap, section)
     return score
 end
 
@@ -180,7 +175,6 @@ local leftcorner = calcandrender(cells, 130,"corner-left")
 
 cells = {{x=1,y=66}}
 local rightcorner = calcandrender(cells, 130, "corner-right")
-
 
 cells={{x=1,y=1}}
 local bottomright34 = calcandrender(cells,130+65, "bottomright34")
@@ -207,16 +201,6 @@ cells={{x=131, y=131}}
 local topleft14 = calcandrender(cells, 64, "topleft14")
 
 
--- cells= {{x=131,y=1}}
--- local bottomleft34, cellmap = spacesaftersteps(map, cells, 130+65, false)
--- -- print("bottomleft34", bottomleft34)
--- cells= {{x=131,y=1}}
--- local bottomleft14, cellmap = spacesaftersteps(map, cells, 64, false)
-
--- cells = {}
--- local topleft34, cellmap = spacesaftersteps(map, cells, 130+65)
-
-
 P2 = (topcorner + bottomcorner + leftcorner + rightcorner) +
      (totalevencells * interioreven + totaloddcells * interiorodd) +
      (edge34tiles * bottomright34 + edge14tiles * bottomright14) +
@@ -225,17 +209,6 @@ P2 = (topcorner + bottomcorner + leftcorner + rightcorner) +
      (edge34tiles * topleft34 + edge14tiles * topleft14)
 
 
--- writemapcells()
-
--- From center S fieldfiels in 129 steps for 7558 cells (or 130 steps for 7623 cells)
-
-
 print('\nDay Twenty One')
 print(string.format('Part 1 - Answer %s',P1)) -- 3729
 print(string.format('Part 2 - Answer %d', P2)) -- 621289922886149
-
-
---[[
-    P2
-    12295565317  TOO LOW (forgot non-axis interior space)
-]]
