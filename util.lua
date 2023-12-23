@@ -12,14 +12,26 @@ function file_exists(path)
     
   -- get all lines from a file, returns an empty 
   -- list/table if the file does not exist
-  function lines_from(file)
-    if not file_exists(file) then return {} end
-    lines = {}
-    for line in io.lines(file) do 
-      lines[#lines + 1] = line
-    end
-    return lines
+function lines_from(file)
+  if not file_exists(file) then return {} end
+  lines = {}
+  for line in io.lines(file) do 
+    lines[#lines + 1] = line
   end
+  return lines
+end
+
+function tobase10(n)
+  return tonumber(n,10)
+end
+
+function table.shallow_copy(t)
+  local a = {}
+  for k,v in pairs(t) do
+      a[k] = v
+  end
+  return a
+end
 
   -- Levenshtein implementation from
 --https://github.com/kennyledet/Algorithm-Implementations/blob/master/Levenshtein_distance/Lua/Yonaba/levenshtein.lua
@@ -29,6 +41,18 @@ function matrix(row,col)
       for j=1,col do m[i][j] = 0 end
   end
   return m
+end
+
+local function matrixtostring(M)
+
+  local s = ''
+  for k,v in pairs(M) do
+      for i=1, #v do 
+          s = s..v[i]
+      end
+      s = s..'\n'
+  end
+  return s
 end
 
 function levenshtein(strA,strB)
@@ -46,6 +70,15 @@ function levenshtein(strA,strB)
       end
   end
   return M[row][col], M
+end
+
+function tokey(x,y)
+  return x..':'..y
+end
+
+function fromkey(k)
+  local n = map(flatten(unroll(k:gmatch('([%-]-%d+)%:([%-]-%d+)'))),tobase10)
+  return table.unpack(n)
 end
 
 -- https://stackoverflow.com/a/27028488
@@ -80,12 +113,11 @@ function spairs(t, sortFunction)
   return coroutine.wrap(function()
       
       for k,v in pairs(keys) do
-          coroutine.yield(v,t[v])
+          coroutine.yield(v,t[v],k)
       end      
       coroutine.yield(nil)
   end)
 end
-
 
 function map(t, f)
   local res = {}
@@ -251,6 +283,21 @@ function table:reduce(i,a)
   return reduce(self,i,a)
 end
 
+function foldL(t,f,a)
+  
+  for i = 1, #t, 1 do
+    a = f(a,t[i],i,t)
+  end
+  return a
+end
+
+function foldR(t,f,a)
+  for i = #t, 1, -1 do
+    a = f(a,t[i],i,t)
+  end
+  return a
+end
+
 function unroll(f,_s,_var)
   --iterate some function until exhausted (or safety?)
   --capture all returns to table.
@@ -261,10 +308,12 @@ function unroll(f,_s,_var)
       local r = {f(_s,_var)}
       _var = r[1]
       if _var == nil then break end
+      if #r == 1 then --collapse simple table of 1 value
+        r = r[1]
+      end
       res[count] = r
       count = count + 1
       -- if count > 10000 then break end -- sanity check
   end
   return res
 end
-
