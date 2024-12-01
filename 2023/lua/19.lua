@@ -117,14 +117,6 @@ local function mergeandreplacesame(rep)
     end
 end
 
-local function replacedefault()
-
-    for _,f in pairs(workflow) do
-        
-
-    end
-end
-
 local function logworkflow(workflow) 
 
     local f = assert(io.open("log/19-workflow.txt","w"))
@@ -140,7 +132,6 @@ local function logworkflow(workflow)
                 f:write(string.format("%s}\n",r.f))
             end
         end
-        -- f:write(string.format("%s\n",inspect(v,{newline=""})))
     end
 
     f:close()
@@ -150,12 +141,11 @@ print("Pre-reuction", count(workflow))
 local lastcount  = count(workflow)
 
 while true do 
-mergeandreplacesame("A")
-mergeandreplacesame("R")
+    mergeandreplacesame("A")
+    mergeandreplacesame("R")
 
-
-if count(workflow) == lastcount then break end
-lastcount = count(workflow)
+    if count(workflow) == lastcount then break end
+    lastcount = count(workflow)
 end
 
 print("post reduction", count(workflow))
@@ -207,13 +197,11 @@ while true do
 
                 scoreorforward(newset,r.f)
                 --testset goes on to next rule
-                
             elseif r.n < testset.parts[r.p].min then
                 -- whole set passes
                 scoreorforward(testset,r.f)
             else
                 -- failed criteria, move to next rule
-                
             end
         elseif r.op == "<" then
 
@@ -238,25 +226,10 @@ while true do
             end
         else 
             --default
-
             scoreorforward(testset, r.f)
-            -- if r.f == "A" then
-            --     -- accepted, score, done
-            --     P2 = P2 + scorepartset(testset.parts)
-            -- elseif r.f == "R" then
-            --     --rejected, dead
-            -- else
-            --     testset.next = r.f
-            --     table.insert(partsets,testset)
-            -- end
         end
     end
 end
-
-
-
--- print(inspect(workflow))
-
 
 print('\nDay Nineteen')
 print(string.format('Part 1 - Answer %s',P1)) -- 401674
