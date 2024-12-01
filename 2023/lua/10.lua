@@ -215,12 +215,12 @@ for _,v in pairs(d) do
     local s = ''
     for i=1,140 do
         local c = v[i]
-        -- if c == "|" then c = "│" end
-        -- if c == "F" then c = "┌" end
-        -- if c == "7" then c = "┐" end
-        -- if c == "L" then c = "└" end
-        -- if c == "-" then c = "─" end
-        -- if c == "J" then c = "┘" end
+        if c == "|" then c = "│" end
+        if c == "F" then c = "┌" end
+        if c == "7" then c = "┐" end
+        if c == "L" then c = "└" end
+        if c == "-" then c = "─" end
+        if c == "J" then c = "┘" end
         s = s..(c or ' ')
     end
     s = floodfill(s,'O')
