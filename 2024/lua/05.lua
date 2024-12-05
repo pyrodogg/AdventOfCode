@@ -49,16 +49,6 @@ local function validateUpdate(update)
     return true, update[math.ceil(#update/2)]
 end
 
-local function pagesort(a,b)
-    --return true if a goes before b
-    for _, r in pairs(rules) do
-        if r.l == a and r.f == b then
-            return false
-        end
-    end
-    return a>b
-end
-
 local function insertPage(u,p)
     -- requires correctly sorted update
     local new_index = 1
@@ -73,9 +63,6 @@ local function insertPage(u,p)
     table.insert(u,new_index,p)
     return u
 end
-
---local uorder = {}
-
 
 for k,v in pairs(updates) do
 
@@ -99,21 +86,6 @@ for k,v in pairs(updates) do
     end
 end
 
-local u = {}
-insertPage(u,26)
-insertPage(u,27)
-insertPage(u,62)
-insertPage(u,87)
-insertPage(u,18)
-insertPage(u,75)
-insertPage(u,86)
-print(validateUpdate(u))
-tprint(u)
-
-
-
---print(inspect(updates))
-
-print('\n2024 Day Four')
+print('\n2024 Day Five')
 print(string.format('Part 1 - Answer %s',P1)) -- 
 print(string.format('Part 2 - Answer %d', P2)) --
