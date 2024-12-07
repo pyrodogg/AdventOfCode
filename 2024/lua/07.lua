@@ -102,44 +102,17 @@ local function mathWorksRecurr(a,t,ops,l)
     return a == t[1]
 end
 
-local function whereismysanity(a,t,optrl)
-
-    assert(#optrl == #t-1, "Invalid #optrl")
-    optrl = flip(optrl)
-
-    local attempt = t[1]
-
-    for k, o in pairs(optrl) do
-        
-        if o == "-" then
-            attempt = attempt + t[k+1]
-        elseif o == "/" then
-            attempt = attempt * t[k+1]
-        elseif o == "||" then
-            attempt = tobase10(attempt..''..t[k+1])
-        else
-            assert(false,"wat")
-        end
-    end
-
-    assert(attempt==a,"Where is my fucking sanity")
-end
-
 local function mathWorksPart2(a,t,l,op,optrl)
     
     if l == nil then l = 0 else l = l + 1 end
-    if op == nil then op = {} end
+    --if op == nil then op = {} end
     if optrl == nil then optrl = {} end
-
-    
 
     local i = #t-l
 
     --print(a,inspect(t),'l '..l, 'i '..i, math_opts[op], inspect(flip(optrl)))
 
     if #t == 0 then
-        -- concats to the end?
-        --print("YATZEE")
         assert(false,"yatzee")
         --return true
     elseif a < 0 then
@@ -149,15 +122,6 @@ local function mathWorksPart2(a,t,l,op,optrl)
         --print('i<1, false')
         return false
     end
-
-    -- if a >= 0 and a<= 1 and i == 1 then
-    --     --print("HOLY SHIT")
-    --     --print(a, inspect(t),l,op)
-    --     return true
-    -- end
-    -- if (#t-l) < 1 or #t == 0 then
-    --     return false
-    -- end
 
     if i == 1 then
         --print("PERFECT!")
@@ -173,30 +137,16 @@ local function mathWorksPart2(a,t,l,op,optrl)
 
     table.insert(optrl,math_opts[op])
 
+    local nextA
     if op == 1 then -- Sub
 
-        if a == t[#t-l] and #t-l == 1 then
-            return a == t[#t-l]
-        else
-            local subA = a - t[#t-l]
-            --ok here, continue recurr
-            return mathWorksPart2(subA,table.shallow_copy(t),l,1,table.shallow_copy(optrl)) or
-            mathWorksPart2(subA,table.shallow_copy(t),l,2,table.shallow_copy(optrl)) or
-            mathWorksPart2(subA,table.shallow_copy(t),l,3,table.shallow_copy(optrl))
-        end
+        nextA = a - t[i]
 
     elseif op == 2 then -- Div
-        local work = a / t[#t-l]
+        local work = a / t[i]
 
-        local divA
         if work == math.floor(work) then
-            divA = math.floor(work)
-
-            --ok here, continue recurr
-            return mathWorksPart2(divA,table.shallow_copy(t),l,1,table.shallow_copy(optrl)) or
-            mathWorksPart2(divA,table.shallow_copy(t),l,2,table.shallow_copy(optrl)) or
-            mathWorksPart2(divA,table.shallow_copy(t),l,3,table.shallow_copy(optrl))
-
+            nextA = math.floor(work)
         else
             --bad div, branch fails
             return false
@@ -207,32 +157,24 @@ local function mathWorksPart2(a,t,l,op,optrl)
         local s,e = astr:find(t[i].."$")
         if s ~= nil then
 
-            local newA = tobase10(astr:sub(1,s-1))
-            if newA == nil then return false end
+            nextA = tobase10(astr:sub(1,s-1))
+            if nextA == nil then return false end
             --print("taco",astr,newA, t[i],s,e)
-            --local newT = table.shallow_copy(t)
-            --table.remove(newT)
-            --print(inspect(t),inspect(newT))
-
-            --ok here, continue recurr
-            return mathWorksPart2(newA,table.shallow_copy(t),l,1,table.shallow_copy(optrl)) or
-            mathWorksPart2(newA,table.shallow_copy(t),l,2,table.shallow_copy(optrl)) or
-            mathWorksPart2(newA,table.shallow_copy(t),l,3,table.shallow_copy(optrl))
-
         else
             --can't concat, branch fail
             return false
         end
     else
         assert(false,"Invalid Op")
-        -- return mathWorksPart2(a,table.shallow_copy(t),-1,1) or
-        -- mathWorksPart2(a,table.shallow_copy(t),-1,2) or
-        -- mathWorksPart2(a,table.shallow_copy(t),-1,3)
     end
+
+    return mathWorksPart2(nextA,t,l,2,table.shallow_copy(optrl)) or
+    mathWorksPart2(nextA,t,l,3,table.shallow_copy(optrl)) or
+    mathWorksPart2(nextA,t,l,1,table.shallow_copy(optrl))
 end
 
 for k,v in pairs(lines)  do
- 
+
     local ans, terms = v:match("(%d+): ([%d ]+)")
     ans = tobase10(ans)
     terms = map(unroll(terms:gmatch("(%d+)")),tobase10)
@@ -246,12 +188,11 @@ for k,v in pairs(lines)  do
             P2 = P2 + ans
         else
             --if mathWorksPart2(ans,table.shallow_copy(terms)) then
-                if mathWorksPart2(ans,table.shallow_copy(terms),-1,1) or
-                mathWorksPart2(ans,table.shallow_copy(terms),-1,2) or
-                mathWorksPart2(ans,table.shallow_copy(terms),-1,3) then
+                if mathWorksPart2(ans,terms,-1,1) or
+                mathWorksPart2(ans,terms,-1,2) or
+                mathWorksPart2(ans,terms,-1,3) then
                 --print(k, 'OK2', ans, inspect(terms))
                 P2 = P2 + ans
-                --whereismysanity(ans,table.shallow_copy(terms),)
             else
                 --print(k, 'Fail', ans, inspect(terms))
             end
@@ -260,20 +201,6 @@ for k,v in pairs(lines)  do
     --break
 end
 
---print(string.find("4865","5".."$"))
-
 print('\n2024 Day Seven')
 print(string.format('Part 1 - Answer %s',P1)) --
 print(string.format('Part 2 - Answer %d', P2)) --
-
---[[
-
-P2 
-
-1399219446947 too low 
-88310800665502 too low!!
-275791737999218 too high
-275791737999003
-
-
-]]
