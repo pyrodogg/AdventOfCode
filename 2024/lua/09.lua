@@ -19,8 +19,6 @@ for i = 1, #drive, 1 do
     blocks_total.total = blocks_total.total + size
 end
 
---print(blocks_total.file - blocks_total.space)
-
 local getBlockId = coroutine.wrap(function()
     local blocks_sent = 0
     for i = #drive, 1, -1 do
@@ -65,7 +63,7 @@ for i = 1, #drive, 1 do
                 --print("NO FREE")
                 break
             else
-                --print('id '..free_block..' p '..acc..' t '..free_block*(acc+j))
+                --checksum for moved blocks
                 P1 = P1 + free_block*(acc+j)
             end
         end
@@ -77,11 +75,9 @@ for i = 1, #drive, 1 do
         for j = 0, size-1, 1 do
             --print(id..' '..acc+j-1)
             --checksum for 'unmoved' files
-            --print('id '..id..' j '..j..' a '..acc+j..' p1 '..(id*(acc+j)))
             P1 = P1 + (id*(acc+j))
 
             if acc+j+1 == blocks_total.file then
-                --print("BREKA HARDER"..acc+j)
                 break
             end
         end
@@ -108,19 +104,15 @@ end
 
 local i = #d
 local lastfound = {}
---for i=#d, 1, -2 do
 local moved = math.maxinteger
 while i >= 1 do
     local id = d[i].id
     local n = d[i].n
     local extra
     if id >= moved then
-        --print("byee")
         goto continue
     end
-    --if type(d[i]) ~= "number" then goto continue end
     --print(i.." fit "..d[i].n..'x '..d[i].id.."'s somewhere")
-    --print("size"..#d)
 
     lastfound[n] = lastfound[n] or 2
     for s=lastfound[n],i,2 do
@@ -128,7 +120,7 @@ while i >= 1 do
             moved = id
             lastfound[n] =s
             --print("found "..d[s].." space at "..s..' to fit '..d[i].n..'x '..d[i].id.."'s")
-            local extra = d[s] - d[i].n
+            extra = d[s] - d[i].n
             d[s] = 0
             table.insert(d,s+1,{n=n,id=id})
             table.insert(d,s+2,extra)
@@ -165,21 +157,6 @@ for i=1, #d, 1 do
         end
     end
 end
---print(inspect(d))
---print(test)
-
---[[
-2333133121414131402
-]]
-
-
-
--- compact(files,space)
-
-
--- print(inspect(files))
--- print(inspect(space))
-
 
 print('\n2024 Day Nine')
 print(string.format('Part 1 - Answer %s',P1)) --
