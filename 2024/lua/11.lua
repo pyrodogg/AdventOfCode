@@ -62,7 +62,7 @@ local function blinkonce(n)
     end
 end
 
-local seeds = map(unroll(lines[1]:gmatch("(%d+)")),tobase10)
+local seeds = aoc.intsFromLine(lines[1])
 local satchel = {}
 
 for k,v in pairs(seeds) do
@@ -93,10 +93,9 @@ for i = 1, 75, 1 do
     end
     -- print("")
     -- print('out\n'..inspect(satchel))
-    -- print(i, "Score", score)
 end
 
-for k,v in pairs(satchel) do
+for _,v in pairs(satchel) do
     P2 = P2 + v
 end
 

@@ -27,4 +27,12 @@ function aoc.logfile(slug,...)
         f:close()
 end
 
+function aoc.intsFromLine(line, match, sep)
+    if match == nil or match == "" then
+        match = "%d+"
+    end
+    sep = sep or ""
+    return map(unroll(line:gmatch("("..match..")"..sep)),tobase10)
+end
+
 return aoc
