@@ -2,7 +2,7 @@ package.path = package.path .. ';../../?.lua'
 require "util"
 local inspect = require "inspect"
 local aoc = require "lib.aoc"
---local linear = require("linear")
+-- local linear = require("linear")
 
 local lines = lines_from(arg[1] or ('../input/'..string.gsub(arg[0],'lua','txt')))
 local P1, P2 = 0, 0
@@ -28,6 +28,7 @@ for k,v in pairs(lines) do
     end
 end
 
+-- Initial solve was brute force, nice for verifying specific results
 local function brute(k,v,part2)
         local limit = 100
         if part2 then limit = 10000000000000 end
@@ -57,22 +58,34 @@ local function round_pedro(num)
 
 local function smart(k,v, part2)
 
-        local x_prize, y_prize = v.p[1]+0.0,v.p[2]+0.0
-        local x_a, x_b = v.a[1]+0.0, v.b[1]+0.0
-        local y_a, y_b = v.a[2]+0.0, v.b[2]+0.0
+        local x_prize, y_prize = v.p[1],v.p[2]
+        local x_a, x_b = v.a[1], v.b[1]
+        local y_a, y_b = v.a[2], v.b[2]
 
         if part2 then
             x_prize = x_prize + 10000000000000
             y_prize = y_prize + 10000000000000
         end
 
-        local a = (x_prize/x_a) - ((x_b/x_a)*y_prize-((x_b/x_a)*y_a*x_prize/x_a))/(y_b-(y_a*x_b/x_a))
-        local b = ((y_prize-(y_a*x_prize/x_a))/(y_b-(y_a*x_b/x_a)))
+        -- Solution with Lua Linear module, something to explore in the future
+        -- local A = linear.tolinear({ { x_a, x_b }, { y_a, y_b } })
+        -- local B = linear.matrix(2, 1)
+        -- local q = linear.tvector(B, 1)  -- column vector
+        -- q[1], q[2] = x_prize, y_prize
+        -- linear.gesv(A, B)
+        -- print("solutions", q[1], q[2])
+
+        -- Manuall elimination calculation
+        -- local a = (x_prize/x_a) - ((x_b/x_a)*y_prize-((x_b/x_a)*y_a*x_prize/x_a))/(y_b-(y_a*x_b/x_a))
+        -- local b = ((y_prize-(y_a*x_prize/x_a))/(y_b-(y_a*x_b/x_a)))
+        -- Inverse Matrix Formula / Cramer
+        local a = (y_b*x_prize - x_b*y_prize)/(x_a*y_b - x_b*y_a)
+        local b = (-y_a*x_prize + x_a*y_prize)/(x_a*y_b - x_b*y_a)
+        -- Uncurse the floating point
         local a_trim = round_pedro(a)
         local b_trim = round_pedro(b)
 
-        --print(a,math.floor(a),math.floor(a+0.5),round_pedro(a), round_pedro(a)==a)
-
+        -- Test results
         local test1 = a_trim*x_a + b_trim*x_b == x_prize
         local test2 = a_trim*y_a + b_trim*y_b == y_prize
 
@@ -84,24 +97,22 @@ local function smart(k,v, part2)
         -- print(string.format("Test results %s and %s",test1,test2))
 
         if test1 and test2 then
-            --floating point!!!
-            P2 = P2 + a_trim*3+b_trim
-            return true
+            return score
         else
-            return false
+            return 0
         end
 end
 
 for k,v in pairs(game) do
     -- if k > 2 then break end
     -- local b = brute(k,v,false)
-    local s = smart(k,v,true)
-    if P2 > math.maxinteger / 100 then print("Warning") end
-    -- if b and not s then break end
-    --print("")
-    -- if not s then break end
+    P1 = P1 + smart(k,v,false)
+    P2 = P2 + smart(k,v,true)
+
 end
 
+
+
 print('\n2024 Day Thirteen')
-print(string.format('Part 1 - Answer %s',P1)) --
+print(string.format('Part 1 - Answer %d',P1)) --
 print(string.format('Part 2 - Answer %d', P2)) --
