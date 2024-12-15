@@ -2,7 +2,7 @@ package.path = package.path .. ';../../?.lua'
 require "util"
 local inspect = require "inspect"
 local aoc = require "lib.aoc"
-local Vec2D = require"lib.vec2d"
+require"lib.vec2d"
 -- local tuple = require "tuple"
 
 local lines = lines_from(arg[1] or ('../input/'..string.gsub(arg[0],'lua','txt')))
@@ -164,9 +164,7 @@ local function trymove(grid,bot,dir, part)
             grid[move_y][move_x] = "O"
         end
         grid[barrels[1].y][barrels[1].x] = nil -- remove last barrel
-        -- print(string.format("Moved %d barrels",#barrels))
         return true -- free space after stack of barrels
-        -- return false
     else
         -- print("puuush!", inspect(barrels))
         --sort to put 'deepest' barrels at 1,2,3...
@@ -197,6 +195,12 @@ local function trymove(grid,bot,dir, part)
     end
 end
 
+local function sleep (a) 
+    local sec = tonumber(os.clock() + a);
+    while (os.clock() < sec) do
+    end
+end
+
 -- print("Starting Grid")
 -- print(renderGrid(grid,bot))
 -- print(renderGrid(widegrid,bot2))
@@ -215,8 +219,10 @@ for k,v in pairs(move) do
         --     print(renderGrid(widegrid,bot2))
         -- end
     end
-    --print(renderGrid(widegrid,bot2))
-    checkintegrity(k,widegrid,bot2)
+    -- print(string.format("Step %d/%d move %s",k,#move,dir_map[v]))
+    -- print(renderGrid(widegrid,bot2))
+    -- sleep(.05)
+    --checkintegrity(k,widegrid,bot2)
 end
 
 P1 = scoreGPS(grid)
