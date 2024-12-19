@@ -10,7 +10,7 @@ local P1, P2 = 0, 0
 local towel = {}
 local pattern = {}
 
-for k,v in pairs(lines) do
+for _,v in pairs(lines) do
     if v:find(",") then
         towel = unroll(v:gmatch("(%w+)"))
 
@@ -31,7 +31,10 @@ end
 -- local rextest = "^(?:("..table.concat(towel,")|(").."))+?$"
 -- local r = rex.new(rextest)
 
-for k,v in pairs(pattern) do
+-- All operations bounded 1 to #v so reusing table
+local step_ways = {}
+local v_map = {}
+for _,v in pairs(pattern) do
     -- local s,e,y =  r:find(v)
 
     -- if s==1 and e== #v then
@@ -41,9 +44,8 @@ for k,v in pairs(pattern) do
         Go through string once and check all of the 1-,2-,n- sub string matches
         from dictionary
         ]]
-        local v_map = {}
         for i = 1, #v do
-            v_map[i] = v_map[i] or {}
+            v_map[i] = {}
             for j = 0, math.min(max_towel_length-1,#v-i) do
                 local stub = v:sub(i,i+j)
                 if towel_rack[stub] then
@@ -57,7 +59,6 @@ for k,v in pairs(pattern) do
         Assume index i has 1-,2,3- length matches
         Score for index i is score[i+1]+score[i+2],score[i+3]
         ]]
-        local step_ways = {}
         step_ways[#v+1] = 1 --"empty space"
         for i = #v, 1, -1 do
 
@@ -71,8 +72,8 @@ for k,v in pairs(pattern) do
         if step_ways[1] > 0 then
             P1=P1+1
         end
-    --end
-end
+        --end
+    end
 
 print('\n2024 Day Nineteen')
 print(string.format('Part 1 - Answer %s',P1)) --
