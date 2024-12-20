@@ -8,7 +8,8 @@
 ---@operator mul(number): Vec2D
 Vec2D = {}
 do
-local mt = {
+local mt
+mt = {
             __add = function (a, b)
                 return Vec2D{a.x+b.x, a.y+b.y}
             end,
@@ -23,13 +24,18 @@ local mt = {
                 end
             end,
             __eq =function (a, b)
-                return (a.x or a[1]) == (b.x or b[1]) and (a.y or a[2]) == (b.y or b[2])
+                if getmetatable(a) == mt and getmetatable(b) == mt then
+                    return a.x == b.x and a.y == b.y
+                else
+                    --assert(false,"not supported")
+                    return false
+                end
             end,
             __len = function (a)
                 return math.sqrt(a.x^2 + a.y^2)
             end,
             __tostring = function(a)
-                return string.format("%d,%d",a.x,a.y)
+                return a:toString()
             end,
             unpack = function(a)
                 return a.x, a.y
@@ -42,7 +48,7 @@ local mt = {
     setmetatable(Vec2D,{
         --__index = Vec2D,
         ---@param self Vec2D
-        ---@param initx number|table<string,number> X
+        ---@param initx number|string|table<string,number> X
         ---@param inity? number Y
         ---@return Vec2D
         __call = function(self,initx,inity)
@@ -50,6 +56,8 @@ local mt = {
             if type(initx) == "table" then
                 o.x = initx.x or initx[1] or 0
                 o.y = initx.y or initx[2] or 0
+            elseif type(initx) =="string" then
+                o.x, o.y = table.unpack(map(unroll(initx:gmatch("([-]*%d+)")),tobase10))
             else
                 o.x = initx or 0
                 o.y = inity or 0
@@ -146,6 +154,18 @@ function Vec2D:rotate(degCW,origin)
 
     -- print(phi,sin,cos,o.x,o.y)
     return o
+end
+
+function Vec2D:manhattan(other)
+    return math.abs(other.y - self.y) + math.abs(other.x - self.x)
+end
+
+function Vec2D:copy()
+    return Vec2D{self.x,self.y}
+end
+
+function Vec2D:toString()
+    return string.format("%d,%d",self.x,self.y)
 end
 
 return Vec2D
