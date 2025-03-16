@@ -1,21 +1,9 @@
 package.path = package.path .. ';../../?.lua'
 require "util"
 local inspect = require "inspect"
-local lpeg = require "lpeg"
-local re = require"re"
-
 
 local lines = lines_from(arg[1] or ('../input/'..string.gsub(arg[0],'lua','txt')))
 local P1, P2 = 0, 0
-
--- local w = lpeg.C(lpeg.S("mul(")*lpeg.R("09")^1*lpeg.S","*lpeg.R"09"^1+lpeg.S")")
-
--- local b = lpeg.P{ "(" * ((1 - lpeg.S"()") + lpeg.V(1))^0 * ")" }
-
--- local Cp = lpeg.Cp()
--- function anywhere (p)
---   return (1 - lpeg.P(p))^0 * Cp * p * Cp
--- end
 
 local mem = ""
 for k,v in pairs(lines) do 
