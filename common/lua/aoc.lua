@@ -19,6 +19,24 @@ local function bounds(lines)
 end
 aoc.bounds = bounds
 
+local pow10 = {
+            1,
+            10,
+            100,
+            1000,
+            10000,
+            100000,
+            1000000,
+            10000000,
+            100000000,
+            1000000000,
+            10000000000,
+            100000000000,
+            1000000000000,
+            10000000000000,
+        }
+aoc.pow10 = pow10
+
 function aoc.logfile(slug,...)
 
     assert(slug ~= nil and slug ~= "")
