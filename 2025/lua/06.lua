@@ -2,6 +2,7 @@ package.path = package.path .. ';../../?.lua'
 require "util"
 local inspect = require "inspect"
 local aoc = require "lib.aoc"
+local maths = require "lib.maths"
 
 local lines = lines_from(arg[1] or ('../input/'..string.gsub(arg[0],'lua','txt')))
 local P1, P2 = 0, 0
@@ -55,16 +56,14 @@ for k,v in pairs(tlines) do
     local plus = v:match("[+]")
     local mul = v:match("[*]")
 
-    if v == "" or v == "    " then
+    if n == nil then
     else
-        table.insert(s,n)
+        table.insert(s,tobase10(n))
         if plus then
-            -- print(inspect(s))
-            P2 = P2 + s[1] + (s[2] or 0) + (s[3] or 0) + (s[4] or 0)
+            P2 = foldL(s, maths.add, P2)
             s = {}
         elseif mul then
-            -- print(k,inspect(s))
-            P2 = P2 + (s[1] * (s[2] or 1) * (s[3] or 1) * (s[4] or 1))
+            P2 = P2 + foldL(s, maths.mul,1)
             s = {}
         end
     end
