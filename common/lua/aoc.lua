@@ -53,6 +53,18 @@ function aoc.intsFromLine(line, match, sep)
     return map(unroll(line:gmatch("("..match..")"..sep)),tobase10)
 end
 
+function aoc.charsFromLine(line)
+    return unroll(line:gmatch("."))
+end
+
+function aoc.charGridFromLines(lines)
+    local grid = {}
+    for k,v in pairs(lines) do
+       grid[k] = aoc.charsFromLine(v)
+    end
+    return grid
+end
+
 function aoc.GaussJordan(a,n)
 
     local j = 1
@@ -94,6 +106,18 @@ function aoc.GaussJordan(a,n)
     end
 
     return a, flag
+end
+
+function aoc.renderGrid(grid)
+    local out = ""
+    local W, H = aoc.bounds(grid)
+    for y=1,H,1 do
+        for x=1,W do
+            out = out..(grid[y][x] or " ")
+        end
+        out = out.."\n"
+    end
+    return out
 end
 
 return aoc

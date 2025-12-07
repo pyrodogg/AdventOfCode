@@ -6,23 +6,18 @@ local rex = require"rex_pcre2"
 
 local lines = lines_from(arg[1] or ('../input/'..string.gsub(arg[0],'lua','txt')))
 local P1, P2 = 0, 0
+local r = rex.new('((\\d+?)\\2+)')
 
 local function idValid(id)
     id = tostring(id)
 
-    local f = id:match('(%d*)%1')
+    local f = tobase10(id:match('(%d*)%1'))
     if f ~= "" and f ~= nil  then
-        if #(''..f..f) == #id then
-            --print('P1',f..''..f)
-            P1 = P1 + tobase10(f..''..f)
-            P2  = P2 + tobase10(f..''..f)
+        local ff = (''..f..f)
+        if #(ff) == #id then
+            P1 = P1 + tobase10(ff)
+            P2  = P2 + tobase10(ff)
         else
-            local searchset = ''
-            for i = 1, #f do
-                searchset = searchset .. '['..f:sub(i,i)..']'
-            end
-            local g = id:match('['..f..']+')
-            local r = rex.new('((\\d+?)\\2+)')
             local e = r:match(id)
             if e ~= nil and #e == #id then
                 --print('P2',id,e)
@@ -30,7 +25,7 @@ local function idValid(id)
             end
         end
 
-        return tobase10(f..''..f)
+        return tobase10(ff)
     end
 end
 
@@ -48,8 +43,6 @@ for k, v in pairs(lines) do
     --if k == 2 then break end
     end
 end
-
-
 
 
 print('\n2025 Day Two')
